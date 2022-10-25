@@ -1,16 +1,17 @@
-# async_notifier_example_riverpod
+# AsyncNotifier example with Riverpod
 
-A new Flutter project.
+A simple project showing how to use the new `Notifier` and `AsyncNotifier` classes with Riverpod and [Riverpod Generator](https://pub.dev/packages/riverpod_generator).
 
-## Getting Started
+<img src="https://github.com/bizz84/async_notifier_example_riverpod/blob/main/.github/images/sign-in-page-example.png?raw=true" alt="AsyncNotifier example" width=50% height=50%>
 
-This project is a starting point for a Flutter application.
+## Implementation
 
-A few resources to get you started if this is your first Flutter project:
+All the widgets and notifiers in the code are based on this article:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [How to use Notifier and AsyncNotifier with the new Flutter Riverpod Generator](https://codewithandrea.com/articles/flutter-riverpod-async-notifier/)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Unit tests
+
+See [auth_controller_test.dart](test/auth_controller_test.dart) for how to unit test `AsyncNotifier` subclasses.
+
+### [LICENSE: MIT](LICENSE.md)

@@ -26,7 +26,13 @@ class AuthButton extends ConsumerWidget {
       height: 60,
       child: ElevatedButton(
         onPressed: state.isLoading ? null : onPressed,
-        child: state.isLoading ? const CircularProgressIndicator() : Text(text),
+        child: state.isLoading
+            ? const CircularProgressIndicator()
+            : Text(text,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(color: Colors.white)),
       ),
     );
   }
