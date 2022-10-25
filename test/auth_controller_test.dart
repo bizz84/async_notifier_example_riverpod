@@ -1,5 +1,5 @@
-import 'package:async_notifier_example_riverpod/account_screen_controller.dart';
-import 'package:async_notifier_example_riverpod/fake_auth_repository.dart';
+import 'package:async_notifier_example_riverpod/notifiers/auth_controller.dart';
+import 'package:async_notifier_example_riverpod/repositories/fake_auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -21,22 +21,21 @@ void main() {
     return container;
   }
 
-  group('AccountScreenController', () {
-    test('initial state is AsyncValue.data', () {
+  group('AuthController', () {
+    test('initial state is AsyncData', () {
       final authRepository = MockAuthRepository();
       final container = makeProviderContainer(authRepository);
       final listener = Listener<AsyncValue<void>>();
       container.listen(
-        accountScreenControllerProvider,
+        authControllerProvider,
         listener,
         fireImmediately: true,
       );
       // verify
       verifyInOrder([
-        () => listener(null, const AsyncLoading<void>()),
+        // the build method returns a value immediately, so we expect AsyncData
+        () => listener(null, const AsyncData<void>(null)),
       ]);
-      // ? Should we not get AsyncData after the build method returns?
-      // ? Yet, it appears that we get no more interactions
       verifyNoMoreInteractions(listener);
       verifyNever(authRepository.signOut);
     });
@@ -45,12 +44,11 @@ void main() {
       // setup
       final authRepository = MockAuthRepository();
       final container = makeProviderContainer(authRepository);
-      final controller =
-          container.read(accountScreenControllerProvider.notifier);
+      final controller = container.read(authControllerProvider.notifier);
       when(authRepository.signOut).thenAnswer((_) => Future.value());
       final listener = Listener<AsyncValue<void>>();
       container.listen(
-        accountScreenControllerProvider,
+        authControllerProvider,
         listener,
         fireImmediately: true,
       );
@@ -58,27 +56,27 @@ void main() {
       await controller.signOut();
       // verify
       verifyInOrder([
-        () => listener(null, const AsyncLoading<void>()),
-        // ? Why do we get two more events here?
-        // ? Would have expected just one for the loading -> data transition
+        // initial value from build method
+        () => listener(null, const AsyncData<void>(null)),
+        // set loading state
+        () => listener(const AsyncData<void>(null), const AsyncLoading<void>()),
+        // data when complete
         () => listener(const AsyncLoading<void>(), const AsyncData<void>(null)),
-        () =>
-            listener(const AsyncData<void>(null), const AsyncData<void>(null)),
       ]);
       verifyNoMoreInteractions(listener);
       verify(authRepository.signOut).called(1);
     });
+
     test('signOut failure', () async {
       // setup
       final authRepository = MockAuthRepository();
       final container = makeProviderContainer(authRepository);
-      final controller =
-          container.read(accountScreenControllerProvider.notifier);
+      final controller = container.read(authControllerProvider.notifier);
       final exception = Exception('Connection failed');
       when(authRepository.signOut).thenThrow(exception);
       final listener = Listener<AsyncValue<void>>();
       container.listen(
-        accountScreenControllerProvider,
+        authControllerProvider,
         listener,
         fireImmediately: true,
       );
@@ -86,12 +84,13 @@ void main() {
       await controller.signOut();
       // verify
       verifyInOrder([
-        () => listener(null, const AsyncLoading<void>()),
-        // ? Why do we get two more events here?
-        // ? Would have expected just one for the loading -> error transition
-        () => listener(const AsyncLoading<void>(), const AsyncData<void>(null)),
+        // initial value from build method
+        () => listener(null, const AsyncData<void>(null)),
+        // set loading state
+        () => listener(const AsyncData<void>(null), const AsyncLoading<void>()),
+        // error when complete
         () => listener(
-              const AsyncData<void>(null),
+              const AsyncLoading<void>(),
               any(that: predicate<AsyncValue<void>>((value) {
                 expect(value.hasError, true);
                 return true;

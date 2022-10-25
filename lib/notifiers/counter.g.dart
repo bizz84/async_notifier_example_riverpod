@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'account_screen_controller.dart';
+part of 'counter.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,22 +29,18 @@ class _SystemHash {
   }
 }
 
-String $AccountScreenControllerHash() =>
-    r'fa52b888fd9b2fcb4d133de5e60fdfdbf30d3be2';
+String $CounterHash() => r'dae67e44133cfcea2b08ab5eace07d8554509bb8';
 
-/// See also [AccountScreenController].
-final accountScreenControllerProvider =
-    AutoDisposeAsyncNotifierProvider<AccountScreenController, void>(
-  AccountScreenController.new,
-  name: r'accountScreenControllerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : $AccountScreenControllerHash,
+/// See also [Counter].
+final counterProvider = AutoDisposeNotifierProvider<Counter, int>(
+  Counter.new,
+  name: r'counterProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : $CounterHash,
 );
-typedef AccountScreenControllerRef = AutoDisposeAsyncNotifierProviderRef<void>;
+typedef CounterRef = AutoDisposeNotifierProviderRef<int>;
 
-abstract class _$AccountScreenController
-    extends AutoDisposeAsyncNotifier<void> {
+abstract class _$Counter extends AutoDisposeNotifier<int> {
   @override
-  FutureOr<void> build();
+  int build();
 }
