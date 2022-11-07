@@ -31,8 +31,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: 2.0.2
-  riverpod_annotation:
+  flutter_riverpod: 2.1.1
+  riverpod_annotation: 1.0.6
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -43,7 +43,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: 2.2.1
-  riverpod_generator:
+  riverpod_generator: 1.0.6
   mocktail:
 
   # The "flutter_lints" package below contains a set of recommended lints to

@@ -1,4 +1,4 @@
-import 'package:async_notifier_example_riverpod/notifiers/counter.dart';
+import 'package:async_notifier_example_riverpod/notifiers/counter_manual.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

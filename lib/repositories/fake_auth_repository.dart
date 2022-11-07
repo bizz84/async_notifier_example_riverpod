@@ -12,12 +12,12 @@ class FakeAuthRepository {
   Stream<bool> authStateChanges() => _authStateController.stream;
 
   Future<void> signInAnonymously() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     _authStateController.add(true);
   }
 
   Future<void> signOut() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     _authStateController.add(false);
   }
 

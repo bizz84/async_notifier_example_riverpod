@@ -21,7 +21,11 @@ void main() {
     return container;
   }
 
-  group('AuthController', () {
+  setUpAll(() {
+    registerFallbackValue(const AsyncData<void>(null));
+  });
+
+  group('initialization', () {
     test('initial state is AsyncData', () {
       final authRepository = MockAuthRepository();
       final container = makeProviderContainer(authRepository);
@@ -32,70 +36,134 @@ void main() {
         fireImmediately: true,
       );
       // verify
-      verifyInOrder([
+      verify(
         // the build method returns a value immediately, so we expect AsyncData
         () => listener(null, const AsyncData<void>(null)),
-      ]);
+      );
       verifyNoMoreInteractions(listener);
       verifyNever(authRepository.signOut);
+      verifyNever(authRepository.signInAnonymously);
     });
+  });
 
-    test('signOut success', () async {
+  group('signIn', () {
+    test('success', () async {
       // setup
       final authRepository = MockAuthRepository();
+      when(authRepository.signInAnonymously).thenAnswer((_) => Future.value());
       final container = makeProviderContainer(authRepository);
       final controller = container.read(authControllerProvider.notifier);
-      when(authRepository.signOut).thenAnswer((_) => Future.value());
       final listener = Listener<AsyncValue<void>>();
       container.listen(
         authControllerProvider,
         listener,
         fireImmediately: true,
       );
+      const data = AsyncData<void>(null);
+      // verify initial value from build method
+      verify(() => listener(null, data));
+      // run
+      await controller.signInAnonymously();
+      // verify
+      verifyInOrder([
+        // set loading state
+        // * use a matcher since AsyncLoading != AsyncLoading with data
+        () => listener(data, any(that: isA<AsyncLoading>())),
+        // data when complete
+        () => listener(any(that: isA<AsyncLoading>()), data),
+      ]);
+      verifyNoMoreInteractions(listener);
+      verify(authRepository.signInAnonymously).called(1);
+    });
+
+    test('failure', () async {
+      // setup
+      final authRepository = MockAuthRepository();
+      final exception = Exception('Connection failed');
+      when(authRepository.signInAnonymously).thenThrow(exception);
+      final container = makeProviderContainer(authRepository);
+      final listener = Listener<AsyncValue<void>>();
+      container.listen(
+        authControllerProvider,
+        listener,
+        fireImmediately: true,
+      );
+      const data = AsyncData<void>(null);
+      // verify initial value from build method
+      verify(() => listener(null, data));
+      // run
+      final controller = container.read(authControllerProvider.notifier);
+      await controller.signInAnonymously();
+      // verify
+      verifyInOrder([
+        // set loading state
+        // * use a matcher since AsyncLoading != AsyncLoading with data
+        () => listener(data, any(that: isA<AsyncLoading>())),
+        // error when complete
+        () => listener(
+            any(that: isA<AsyncLoading>()), any(that: isA<AsyncError>())),
+      ]);
+      verifyNoMoreInteractions(listener);
+      verify(authRepository.signInAnonymously).called(1);
+    });
+  });
+
+  group('signOut', () {
+    test('success', () async {
+      // setup
+      final authRepository = MockAuthRepository();
+      when(authRepository.signOut).thenAnswer((_) => Future.value());
+      final container = makeProviderContainer(authRepository);
+      final controller = container.read(authControllerProvider.notifier);
+      final listener = Listener<AsyncValue<void>>();
+      container.listen(
+        authControllerProvider,
+        listener,
+        fireImmediately: true,
+      );
+      const data = AsyncData<void>(null);
+      // verify initial value from build method
+      verify(() => listener(null, data));
       // run
       await controller.signOut();
       // verify
       verifyInOrder([
-        // initial value from build method
-        () => listener(null, const AsyncData<void>(null)),
         // set loading state
-        () => listener(const AsyncData<void>(null), const AsyncLoading<void>()),
+        // * use a matcher since AsyncLoading != AsyncLoading with data
+        () => listener(data, any(that: isA<AsyncLoading>())),
         // data when complete
-        () => listener(const AsyncLoading<void>(), const AsyncData<void>(null)),
+        () => listener(any(that: isA<AsyncLoading>()), data),
       ]);
       verifyNoMoreInteractions(listener);
       verify(authRepository.signOut).called(1);
     });
 
-    test('signOut failure', () async {
+    test('failure', () async {
       // setup
       final authRepository = MockAuthRepository();
-      final container = makeProviderContainer(authRepository);
-      final controller = container.read(authControllerProvider.notifier);
       final exception = Exception('Connection failed');
       when(authRepository.signOut).thenThrow(exception);
+      final container = makeProviderContainer(authRepository);
       final listener = Listener<AsyncValue<void>>();
       container.listen(
         authControllerProvider,
         listener,
         fireImmediately: true,
       );
+      const data = AsyncData<void>(null);
+      // verify initial value from build method
+      verify(() => listener(null, data));
       // run
+      final controller = container.read(authControllerProvider.notifier);
       await controller.signOut();
       // verify
       verifyInOrder([
-        // initial value from build method
-        () => listener(null, const AsyncData<void>(null)),
         // set loading state
-        () => listener(const AsyncData<void>(null), const AsyncLoading<void>()),
+        // * use a matcher since AsyncLoading != AsyncLoading with data
+        () => listener(data, any(that: isA<AsyncLoading>())),
         // error when complete
         () => listener(
-              const AsyncLoading<void>(),
-              any(that: predicate<AsyncValue<void>>((value) {
-                expect(value.hasError, true);
-                return true;
-              })),
-            ),
+            any(that: isA<AsyncLoading>()), any(that: isA<AsyncError>())),
       ]);
       verifyNoMoreInteractions(listener);
       verify(authRepository.signOut).called(1);
