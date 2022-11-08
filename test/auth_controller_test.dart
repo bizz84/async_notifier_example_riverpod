@@ -7,7 +7,7 @@ import 'package:mocktail/mocktail.dart';
 class MockAuthRepository extends Mock implements FakeAuthRepository {}
 
 class Listener<T> extends Mock {
-  void call(T? previous, T? next);
+  void call(T? previous, T next);
 }
 
 void main() {
@@ -22,7 +22,7 @@ void main() {
   }
 
   setUpAll(() {
-    registerFallbackValue(const AsyncData<void>(null));
+    registerFallbackValue(const AsyncLoading<void>());
   });
 
   group('initialization', () {
