@@ -1,4 +1,4 @@
-import 'package:async_notifier_example_riverpod/notifiers/auth_controller_manual.dart';
+import 'package:async_notifier_example_riverpod/notifiers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
