@@ -31,7 +31,7 @@ class AuthButton extends ConsumerWidget {
             : Text(text,
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
+                    .titleLarge!
                     .copyWith(color: Colors.white)),
       ),
     );
